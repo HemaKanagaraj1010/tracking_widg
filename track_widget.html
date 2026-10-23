@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Order Tracking</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=0">
+    <meta name="robots" content="noindex, nofollow">
+    <style>
+        html, body { margin: 0; height: 100%; }
+        eshipz-tracking { min-height: 100%; }
+    </style>
+</head>
+
+{# Same precedence as the old page: value from the view's context first, else from the iframe URL #}
+{% set bg_color = bg_color or request.args.get('bg-color') %}
+{% set bg_txt_color = bg_txt_color or request.args.get('bg-txt-color') %}
+{% set btn_color = btn_color or request.args.get('btn-color') %}
+{% set btn_border = btn_border or request.args.get('btn-border') %}
+{% set txt_color = txt_color or request.args.get('txt-color') %}
+
+<body style="background: {{ bg_color or '#ffffff' }};">
+
+    <!--
+        The iframe page just hosts the same web component the customer would use directly,
+        so the table design is identical in both integration methods.
+        api-base="/" -> the widget calls this same server (same origin: no CORS needed).
+        no-config   -> colours are injected below, so the /config endpoint is not needed.
+        The widget reads ?q=<order> from this page's URL and searches automatically.
+    -->
+    <script src="/static/js/tracking-widget.js"></script>
+
+    <eshipz-tracking
+        customer-id="{{ token }}"
+        api-base="/"
+        no-config
+        order-fallback="{{ request.args.get('order-fallback', 'y') }}"
+        cos="{{ request.args.get('cos', 'n') }}"
+        {% if btn_color %}btn-color="{{ btn_color }}"{% endif %}
+        {% if btn_border %}btn-border="{{ btn_border }}"{% endif %}
+        {% if txt_color %}txt-color="{{ txt_color }}"{% endif %}
+        {% if bg_color %}bg-color="{{ bg_color }}"{% endif %}
+        {% if bg_txt_color %}bg-txt-color="{{ bg_txt_color }}"{% endif %}
+    ></eshipz-tracking>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-PXLQ4D1YNB"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date()); gtag('config', 'G-PXLQ4D1YNB');
+    </script>
+</body>
+
+</html>
