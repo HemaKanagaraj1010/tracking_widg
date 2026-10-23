@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Order Tracking</title>
+  <style>
+    html, body { margin: 0; height: 100%; }
+    eshipz-tracking { min-height: 100%; }
+  </style>
+</head>
+<body>
+
+<!-- TEST-ONLY static page (no Jinja). Settings come from the URL:
+     ?token=<customer id>&api-base=<api origin>&btn-color=...&bg-color=...&q=<order> -->
+<script src="https://uat.eshipz.com:444/static/js/tracking-widget.js"></script>
+<script>
+  const p = new URLSearchParams(window.location.search);
+  const el = document.createElement("eshipz-tracking");
+
+  el.setAttribute("customer-id", p.get("token") || "");
+  el.setAttribute("api-base", p.get("api-base") || "https://uat.eshipz.com:444");
+  el.setAttribute("no-config", "");
+  el.setAttribute("order-fallback", p.get("order-fallback") || "y");
+  el.setAttribute("cos", p.get("cos") || "n");
+
+  ["btn-color", "btn-border", "txt-color", "bg-color", "bg-txt-color"].forEach((k) => {
+    if (p.get(k)) el.setAttribute(k, p.get(k));
+  });
+
+  document.body.style.background = p.get("bg-color") || "#ffffff";
+  document.body.appendChild(el);
+</script>
+
+</body>
+</html>
